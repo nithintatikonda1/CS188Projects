@@ -112,15 +112,18 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return generalSearch(problem, util.PriorityQueue(), False, heuristic)
+    #util.raiseNotDefined()
 
 
 
 #finge tuple (state, prevState, direction, cost)
-def generalSearch(problem, fringe, pq = False):
+def generalSearch(problem, fringe, pq = False, astar = None):
     state = (problem.getStartState(), None, None, 0)
     if (pq):
         fringe.push(state, 0)
+    elif (astar):
+        fringe.push(state, astar(problem.getStartState(), problem))
     else:
         fringe.push(state)
     pathTo = {}
@@ -131,14 +134,15 @@ def generalSearch(problem, fringe, pq = False):
             if (fringe.isEmpty()):
                 return []
             state = fringe.pop()
-        pathTo[state[0]] = state
+        pathTo[state[0]] = state[1:3]
 
         if problem.isGoalState(state[0]):
-            tempState = state
+            tempState = state[0]
             actions = []
-            while tempState[1] != None:
-                actions = [pathTo[tempState[0]][2]] + actions
-                tempState = pathTo[tempState[0]][1]
+            print(pathTo[tempState])
+            while tempState != problem.getStartState():
+                actions = [pathTo[tempState][1]] + actions
+                tempState = pathTo[tempState][0]
             return actions
 
         for x in problem.getSuccessors(state[0]):
@@ -149,9 +153,11 @@ def generalSearch(problem, fringe, pq = False):
                 continue
 
             if (pq):
-                fringe.push((newState, state, direction, cost + state[3]), cost + state[3])
+                fringe.push((newState, state[0], direction, cost + state[3]), cost + state[3])
+            elif (astar):
+                fringe.push((newState, state[0], direction, cost + state[3]), cost + state[3] + astar(newState, problem))
             else:
-                fringe.push((newState, state, direction, cost + state[3]))
+                fringe.push((newState, state[0], direction, cost + state[3]))
 
     return []
 
