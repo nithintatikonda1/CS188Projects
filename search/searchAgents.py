@@ -396,18 +396,34 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     admissible (as well as consistent).
     """
     corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    #walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    lst = [problem.corners[0], problem.corners[1], problem.corners[2], problem.corners[3]]
+    lst = []
+    if (not state[1]):
+        lst.append(corners[0])
+    if (not state[2]):
+        lst.append(corners[1])
+    if (not state[3]):
+        lst.append(corners[2])
+    if (not state[4]):
+        lst.append(corners[3])
+    count = 0
+    pos = state[0]
 
     while (lst):
         index = 0
-        minimum = 10000000
+        minimum = 1000000000
         for i in range(len(lst)):
-            if (manhattanHeuristic())
-            
-    return 0 # Default to trivial solution
+            distance = util.manhattanDistance(lst[i], pos)
+            if (distance < minimum):
+                index = i
+                minimum = distance
+        count += minimum
+        pos = lst[index]
+        del lst[index]
+
+    return count
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
