@@ -50,7 +50,14 @@ def sentence1() -> Expr:
     (not A) or (not B) or C
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    A = Expr('A')
+    B = Expr('B')
+    C = Expr('C')
+    a_or_b = A | B
+    second_exp = (~A)%((~B)|C)
+    third_exp= disjoin([(~A),(~B),(C)])
+    return conjoin([a_or_b, second_exp, third_exp])
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 
@@ -63,7 +70,16 @@ def sentence2() -> Expr:
     (not D) implies C
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    A = Expr('A')
+    B = Expr('B')
+    C = Expr('C')
+    D = Expr('D')
+    first_exp = C % (B | D)
+    second_exp = A >>((~B)&(~D))
+    third_exp = (~(B & (~C)))>>A
+    fourth_exp = (~D)>>C
+    return conjoin([first_exp, second_exp, third_exp, fourth_exp])
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 
@@ -80,7 +96,17 @@ def sentence3() -> Expr:
     Pacman is born at time 0.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    PacmanAlive_1 = PropSymbolExpr('PacmanAlive_1')
+    PacmanAlive_0 = PropSymbolExpr('PacmanAlive_0')
+    PacmanBorn_0 = PropSymbolExpr('PacmanBorn_0')
+    PacmanKilled_0 = PropSymbolExpr('PacmanKilled_0')
+    
+    first = PacmanAlive_1 % disjoin([(PacmanAlive_0 & ~PacmanKilled_0) , conjoin([~PacmanAlive_0,PacmanBorn_0])])
+    second = ~(PacmanAlive_0 & PacmanBorn_0)
+    third = PacmanBorn_0
+
+    return conjoin([first, second, third])
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 def findModel(sentence: Expr) -> Dict[Expr, bool]:
@@ -96,15 +122,19 @@ def findModelUnderstandingCheck() -> Dict[Expr, bool]:
     """
     a = Expr('A')
     "*** BEGIN YOUR CODE HERE ***"
-    print("a.__dict__ is:", a.__dict__) # might be helpful for getting ideas
-    util.raiseNotDefined()
+    a.op = 'a'
+    #print("a.__dict__ is:", a.__dict__) # might be helpful for getting ideas
+    return {a:True}
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 def entails(premise: Expr, conclusion: Expr) -> bool:
     """Returns True if the premise entails the conclusion and False otherwise.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #(A |= B iff A∧ ¬B is unsatisfiable)
+    return not findModel(premise & (~conclusion))
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 def plTrueInverse(assignments: Dict[Expr, bool], inverse_statement: Expr) -> bool:
@@ -112,7 +142,8 @@ def plTrueInverse(assignments: Dict[Expr, bool], inverse_statement: Expr) -> boo
     pl_true may be useful here; see logic.py for its description.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return pl_true((~inverse_statement), assignments,)
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
@@ -138,7 +169,8 @@ def atLeastOne(literals: List[Expr]) -> Expr:
     True
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return disjoin(literals)
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 
@@ -150,7 +182,18 @@ def atMostOne(literals: List[Expr]) -> Expr:
     itertools.combinations may be useful here.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # none of the combos should have two trues
+    # for each combo give expression that evals to true if it does not have two trues
+    # A and B : not A or not B
+    finalLst = []
+    combos = itertools.combinations(literals, 2)
+    for combo in combos:
+        finalLst.append(~combo[0] | ~combo[1])
+    
+    return conjoin(finalLst)
+
+    #return disjoin(finalLst)
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 
@@ -161,7 +204,8 @@ def exactlyOne(literals: List[Expr]) -> Expr:
     the expressions in the list is true.
     """
     "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return atLeastOne(literals) & atMostOne(literals)
+    #util.raiseNotDefined()
     "*** END YOUR CODE HERE ***"
 
 #______________________________________________________________________________
