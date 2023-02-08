@@ -139,7 +139,6 @@ def generalSearch(problem, fringe, pq = False, astar = None):
         if problem.isGoalState(state[0]):
             tempState = state[0]
             actions = []
-            print(pathTo[tempState])
             while tempState != problem.getStartState():
                 actions = [pathTo[tempState][1]] + actions
                 tempState = pathTo[tempState][0]
