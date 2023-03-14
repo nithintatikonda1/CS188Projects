@@ -63,7 +63,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         if (len(self.getLegalActions(state)) == 0):
-            return 0
+            return 0.0
         max_q_value = -2000000000
         for action in self.getLegalActions(state):
             max_q_value = max(max_q_value, self.getQValue(state, action))
@@ -180,12 +180,11 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        print(self.weights)
-        sum = 0
+        total = 0
         features = self.featExtractor.getFeatures(state, action)
-        for key in features:
-            sum += features[key] * self.weights[key]
-        return sum
+        for key in features.keys():
+            total += features[key] * self.weights[key]
+        return total
         #util.raiseNotDefined()
 
     def update(self, state, action, nextState, reward: float):
@@ -194,13 +193,15 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         features = self.featExtractor.getFeatures(state, action)
-        newWeights = {}
-        for key in self.weights:
-             print("sdgfdfg")
-             difference = (reward + self.discount * self.computeValueFromQValues(nextState)) - self.getQValue(state, action)
-             newWeights[key] = self.weights[key] * self.epsilon*difference*features[key]
-
-        self.weights = newWeights
+        tempList = features.keys()
+        #snewWeights = util.Counter()
+        for key in tempList:
+            difference = (reward + self.discount * self.computeValueFromQValues(nextState)) - self.getQValue(state, action)
+            self.weights[key] = self.weights[key] + (self.alpha*difference*features[key])
+        
+        print(self.weights , len(self.weights))
+        print("   ")
+        #self.weights = newWeights
         #util.raiseNotDefined()
 
     def final(self, state):
