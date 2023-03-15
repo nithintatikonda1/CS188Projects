@@ -195,12 +195,9 @@ class ApproximateQAgent(PacmanQAgent):
         features = self.featExtractor.getFeatures(state, action)
         tempList = features.keys()
         #snewWeights = util.Counter()
+        difference = (reward + self.discount * self.computeValueFromQValues(nextState)) - self.getQValue(state, action)
         for key in tempList:
-            difference = (reward + self.discount * self.computeValueFromQValues(nextState)) - self.getQValue(state, action)
             self.weights[key] = self.weights[key] + (self.alpha*difference*features[key])
-        
-        print(self.weights , len(self.weights))
-        print("   ")
         #self.weights = newWeights
         #util.raiseNotDefined()
 
